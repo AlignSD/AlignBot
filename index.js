@@ -3,8 +3,6 @@ const fs = require("fs");
 const { Client, Collection, Intents } = require("discord.js");
 const { token } = require("./config.json");
 
-console.log(process.version);
-
 // Create a new client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
