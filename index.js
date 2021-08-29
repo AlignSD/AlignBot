@@ -23,10 +23,12 @@ for (const file of eventFiles) {
 
 // Load Bot Commands
 client.commands = new Collection();
+
+// set commandFiles array using fs module to store all command files
 const commandFiles = fs
   .readdirSync("./commands")
   .filter((file) => file.endsWith(".js"));
-
+console.log(commandFiles);
 // loop thru all files in commands folder
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
@@ -39,11 +41,13 @@ for (const file of commandFiles) {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
+  // set command variable
   const command = client.commands.get(interaction.commandName);
   console.log(command);
 
   if (!command) return;
 
+  // @params ephemeral option shows response only to the executor of the /command
   try {
     await command.execute(interaction);
   } catch (error) {
