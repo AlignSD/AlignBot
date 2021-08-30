@@ -29,7 +29,6 @@ const commandFiles = fs
   .readdirSync("./commands")
   .filter((file) => file.endsWith(".js"));
 console.log(commandFiles);
-// loop thru all files in commands folder
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   // Set a new item in the Collection
@@ -41,7 +40,6 @@ for (const file of commandFiles) {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
-  // set command variable
   const command = client.commands.get(interaction.commandName);
   console.log(command);
 
