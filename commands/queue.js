@@ -4,7 +4,14 @@ const { MessageEmbed } = require("discord.js");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("queue")
-    .setDescription("queue for media links"),
+    .setDescription("queue for media links")
+    .addStringOption((option) =>
+      option
+        .setName("query")
+        .setDescription("The Song You Want To Play")
+        .setRequired(true)
+    ),
+
   async execute(interaction) {
     const permissions = interaction.channel.permissionsFor(
       interaction.client.user

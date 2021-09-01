@@ -3,11 +3,24 @@ const fs = require("fs");
 const discord = require("discord.js");
 const { Client, Collection, Intents } = require("discord.js");
 const { TOKEN, YOUTUBE_API } = require("./config.json");
-const search = require("youtube-search");
+
+const { Player } = require("discord-player");
+
 // Create a new client instance
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_VOICE_STATES,
+  ],
 });
+
+const player = new Player(client);
+// add the trackStart event so when a song will be played this message will be sent
+
+player.on("trackStart", (queue, track) =>
+  queue.metadata.channel.send(`🎶 | Now playing **${track.title}**!`)
+);
 // Load Bot Event Listeners
 const eventFiles = fs
   .readdirSync("./events")
