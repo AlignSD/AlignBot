@@ -12,7 +12,7 @@ module.exports = {
     if (!permissions.has(["MANAGE_MESSAGES", "ADD_REACTIONS"]))
       return interaction.reply("queue.missingPermissionMessage");
 
-    const queue = interaction.client.commands[2].get(interaction.guild.id);
+    const queue = interaction.client.commands.get(interaction.guild.id);
     if (!queue) return interaction.channel.send("queue.errorNotQueue");
 
     let currentPage = 0;

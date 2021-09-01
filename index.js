@@ -1,11 +1,13 @@
 // Require the necessary discord.js classes
 const fs = require("fs");
+const discord = require("discord.js");
 const { Client, Collection, Intents } = require("discord.js");
-const { TOKEN } = require("./config.json");
-
+const { TOKEN, YOUTUBE_API } = require("./config.json");
+const search = require("youtube-search");
 // Create a new client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
-
+const client = new Client({
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+});
 // Load Bot Event Listeners
 const eventFiles = fs
   .readdirSync("./events")
@@ -28,12 +30,12 @@ client.commands = new Collection();
 const commandFiles = fs
   .readdirSync("./commands")
   .filter((file) => file.endsWith(".js"));
-console.log(commandFiles);
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   // Set a new item in the Collection
   // With the key as the command name and the value as the exported module
-  client.commands.set(command.data.name, command);
+  const data = command.data.toJSON();
+  client.commands.set(data.name, command);
 }
 
 // Command Listener
@@ -41,7 +43,6 @@ client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
   const command = client.commands.get(interaction.commandName);
-  console.log(command);
 
   if (!command) return;
 

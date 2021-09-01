@@ -16,20 +16,21 @@ module.exports = {
     .setName("play")
     .setDescription("Plays link provided thru voice channel"),
   async execute(interaction, args) {
-    const { channel } = interaction.member.voice;
-    console.log(
-      interaction.client.commands[2],
-      "LOOKSDKFSODKFSKDFKOSDFOKSDFKOSDFOKSD"
-    );
+    const channel = interaction.member.voice.channelId;
+    console.log(interaction.content, "interaction.client");
+    // console.log(
+    //   interaction.client.commands,
+    //   "LOOKSDKFSODKFSKDFKOSDFOKSDFKOSDFOKSD"
+    // );
     const serverQueue = interaction.client.commands.get(interaction.guild.id);
 
     if (!channel)
       return interaction.reply("youre not in a channel").catch(console.error);
-    if (serverQueue && channel !== interaction.guild.me.voice.channel)
+    if (serverQueue && channel !== interaction.guild.me.voice.channelId)
       return message
         .reply("usage reply", { prefix: interaction.client.prefix })
         .catch(console.error);
-    if (!args.length)
+    if (!args)
       return interaction.reply("no link provided").catch(console.error);
 
     const permission = channel.permissionFor(interaction.client.user);
