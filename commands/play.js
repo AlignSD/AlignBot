@@ -22,6 +22,7 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
+    console.log(interaction.guild.id, "player guild");
     if (!interaction.member.voice.channelId)
       return await interaction.reply({
         content: "You are not in a voice channel!",

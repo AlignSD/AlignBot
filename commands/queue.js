@@ -4,14 +4,7 @@ const { MessageEmbed } = require("discord.js");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("queue")
-    .setDescription("queue for media links")
-    .addStringOption((option) =>
-      option
-        .setName("query")
-        .setDescription("The Song You Want To Play")
-        .setRequired(true)
-    ),
-
+    .setDescription("queue for media links"),
   async execute(interaction) {
     const permissions = interaction.channel.permissionsFor(
       interaction.client.user
@@ -19,7 +12,7 @@ module.exports = {
     if (!permissions.has(["MANAGE_MESSAGES", "ADD_REACTIONS"]))
       return interaction.reply("queue.missingPermissionMessage");
 
-    const queue = interaction.client.commands.get(interaction.guild.id);
+    const queue = interaction.client.commands[2].get(interaction.guild.id);
     if (!queue) return interaction.channel.send("queue.errorNotQueue");
 
     let currentPage = 0;
