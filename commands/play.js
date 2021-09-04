@@ -1,16 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { Player } = require("discord-player");
-const { Client, Collection, Intents } = require("discord.js");
+const { QueryType } = require("discord-player");
 
-const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_VOICE_STATES,
-  ],
-});
-
-const player = new Player(client);
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("play")
@@ -22,6 +12,8 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
+    const client = require("..");
+    const player = client.player;
     console.log(interaction.guild.id, "player guild");
     if (!interaction.member.voice.channelId)
       return await interaction.reply({
@@ -50,7 +42,7 @@ module.exports = {
         await queue.connect(interaction.member.voice.channel);
     } catch {
       queue.destroy();
-      return await interaction.reply({
+      return await interaction.deferreply({
         content: "Could not join your voice channel!",
         ephemeral: true,
       });

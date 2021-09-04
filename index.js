@@ -3,6 +3,7 @@ const fs = require("fs");
 const discord = require("discord.js");
 const { Client, Collection, Intents } = require("discord.js");
 const { TOKEN, YOUTUBE_API } = require("./config.json");
+const { registerPlayerEvents } = require("./events/musicEvents");
 
 const { Player } = require("discord-player");
 
@@ -16,11 +17,13 @@ const client = new Client({
 });
 
 const player = new Player(client);
+// registerPlayerEvents(client.player);
 // add the trackStart event so when a song will be played this message will be sent
-
-player.on("trackStart", (queue, track) =>
-  queue.metadata.channel.send(`🎶 | Now playing **${track.title}**!`)
-);
+player.on("trackStart", (queue, track) => {
+  queue.metadata.send(
+    `🎶 | Started playing: **${track.title}** in **${queue.connection.channel.name}**!`
+  );
+});
 // Load Bot Event Listeners
 const eventFiles = fs
   .readdirSync("./events")
@@ -73,3 +76,6 @@ client.on("interactionCreate", async (interaction) => {
 
 // Login to Discord with your client's token
 client.login(TOKEN);
+
+module.exports.client = client;
+module.exports.player = player;

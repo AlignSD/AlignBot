@@ -1,32 +1,23 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { Player } = require("discord-player");
-const { Client, Collection, Intents } = require("discord.js");
+const { Client, Intents } = require("discord.js");
+const GUILD_ID = require("../config.json");
 
-const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_VOICE_STATES,
-  ],
-});
-const player = new Player(client);
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("stop")
     .setDescription("Stops any music playing"),
   async execute(interaction) {
-    try {
-      await interaction.deferReply();
-      // if (!queue || !queue.playing)
-      //   return void interaction.followUp({
-      //     content: "❌ | No music is being played!",
-      //   });
-      console.log(interaction.guild.id, "interaction.guild");
-      console.log(player, "player interaction");
-      player.deleteQueue(interaction.guildId);
-      return void interaction.followUp({ content: "🛑 | Stopped the player!" });
-    } catch (err) {
-      console.error(err);
-    }
+    const client = require("..");
+    const player = client.player;
+    console.log(interaction, "asdhfaskhjdfaksjhdfkhjasdkhjfas");
+    await interaction.deferReply();
+    const queue = player.getQueue(interaction.guildId);
+    if (!queue || !queue.playing)
+      return void interaction.followUp({
+        content: "❌ | No music is being played!",
+      });
+    queue.destroy();
+    return void interaction.followUp({ content: "🛑 | Stopped the player!" });
   },
 };
