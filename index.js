@@ -7,6 +7,17 @@ const { registerPlayerEvents } = require("./events/musicEvents");
 
 const { Player } = require("discord-player");
 
+/*
+TODO: SECTION!
+- TODO: Implement queue/playlist for music bot
+- TODO: Implement Permission for / commands 
+- TODO: Refractor Code its a mess atm
+- TODO: Come up with a reaction bot that listens for certain words
+- TODO: Make a Texas Hold'em Module
+- TODO: Figure out how to make a webpage that will allow users to configure bots for
+          this bot for their own servers
+*/
+
 // Create a new client instance
 const client = new Client({
   intents: [
@@ -16,14 +27,17 @@ const client = new Client({
   ],
 });
 
+// Create a new player instance
 const player = new Player(client);
-// registerPlayerEvents(client.player);
-// add the trackStart event so when a song will be played this message will be sent
+
+// TODO: make a player listener module
+// Add the trackStart event so when a song will be played this message will be sent
 player.on("trackStart", (queue, track) => {
   queue.metadata.send(
     `🎶 | Started playing: **${track.title}** in **${queue.connection.channel.name}**!`
   );
 });
+
 // Load Bot Event Listeners
 const eventFiles = fs
   .readdirSync("./events")
