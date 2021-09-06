@@ -58,7 +58,6 @@ module.exports = {
         });
       }
 
-      console.log("Yes my lord");
       await interaction.deferReply();
       const track = await player
         .search(query, {
