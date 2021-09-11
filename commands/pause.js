@@ -31,9 +31,6 @@ module.exports = {
           ephemeral: true,
         });
 
-      // query variable stores users song search query
-      const query = interaction.options.get("query").value;
-
       // queue creates a queue for songs... who woulda thought
       const queue = player.createQueue(interaction.guild, {
         metadata: {
@@ -54,21 +51,13 @@ module.exports = {
       }
 
       await interaction.deferReply();
-      const track = await player
-        .search(query, {
-          requestedBy: interaction.user,
-        })
-        .then((x) => x.tracks[0]);
 
-      if (!track)
-        return await interaction.followUp({
-          content: `❌ | Track **${query}** not found!`,
-        });
-
-      queue.setPaused(true);
+      if (queue.setPaused() === true) {
+        queue.setPaused(false);
+      } else queue.setPaused(true);
 
       return await interaction.followUp({
-        content: `Yes My Lord! ⏱️ | Loading track **${track.title}**!`,
+        content: `Yes My Lord! ⏱️ | Pausing song**!`,
       });
     } else
       return await interaction.reply({
