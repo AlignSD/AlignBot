@@ -4,7 +4,6 @@ const discord = require("discord.js");
 const { Client, Collection, Intents } = require("discord.js");
 const { TOKEN, YOUTUBE_API } = require("./config.json");
 const { registerPlayerEvents } = require("./events/musicEvents");
-
 const { Player } = require("discord-player");
 
 /*
