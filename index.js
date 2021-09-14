@@ -32,9 +32,14 @@ const player = new Player(client);
 // TODO: make a player listener module
 // Add the trackStart event so when a song will be played this message will be sent
 player.on("trackStart", (queue, track) => {
-  queue.metadata.send(
-    `🎶 | Started playing: **${track.title}** in **${queue.connection.channel.name}**!`
-  );
+  // TODO: figure out this metadata error I keep catching
+  try {
+    queue.metadata.send(
+      `🎶 | Started playing: **${track.title}** in **${queue.connection.channel.name}**!`
+    );
+  } catch (e) {
+    return console.error(e);
+  }
 });
 
 // Load Bot Event Listeners

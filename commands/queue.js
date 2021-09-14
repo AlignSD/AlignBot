@@ -1,103 +1,50 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageEmbed } = require("discord.js");
+const { QueryType } = require("discord-player");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("queue")
-    .setDescription("queue for media links"),
+    .setDescription("See queue for song list"),
+
   async execute(interaction) {
-    const permissions = interaction.channel.permissionsFor(
-      interaction.client.user
-    );
-    if (!permissions.has(["MANAGE_MESSAGES", "ADD_REACTIONS"]))
-      return interaction.reply("queue.missingPermissionMessage");
+    const client = require("..");
+    const player = client.player;
 
-    const queue = interaction.client.commands[2].get(interaction.guild.id);
-    if (!queue) return interaction.channel.send("queue.errorNotQueue");
-
-    let currentPage = 0;
-    const embeds = generateQueueEmbed(interaction, queue.songs);
-
-    const queueEmbed = await interaction.channel.send(
-      `**"queue.currentPage" ${currentPage + 1}/${embeds.length}**`,
-      embeds[currentPage]
-    );
-
-    try {
-      await queueEmbed.react("⬅️");
-      await queueEmbed.react("⏹");
-      await queueEmbed.react("➡️");
-    } catch (error) {
-      console.error(error);
-      interaction.channel.send(error.message).catch(console.error);
-    }
-
-    const filter = (reaction, user) =>
-      ["⬅️", "⏹", "➡️"].includes(reaction.emoji.name) &&
-      interaction.author.id === user.id;
-    const collector = queueEmbed.createReactionCollector(filter, {
-      time: 60000,
-    });
-
-    collector.on("collect", async (reaction, user) => {
-      try {
-        if (reaction.emoji.name === "➡️") {
-          if (currentPage < embeds.length - 1) {
-            currentPage++;
-            queueEmbed.edit("queue.currentPage", {
-              page: currentPage + 1,
-              length: embeds.length,
-            }),
-              embeds[currentPage];
-          }
-        } else if (reaction.emoji.name === "⬅️") {
-          if (currentPage !== 0) {
-            --currentPage;
-            queueEmbed.edit("queue.currentPage", {
-              page: currentPage + 1,
-              length: embeds.length,
-            }),
-              embeds[currentPage];
-          }
-        } else {
-          collector.stop();
-          reaction.message.reactions.removeAll();
-        }
-        await reaction.users.remove(interaction.author.id);
-      } catch (error) {
-        console.error(error);
-        return interaction.channel.send(error.message).catch(console.error);
+    if (interaction.user.username === "AlignSD") {
+      if (!interaction.member.voice.channelId) {
+        return await interaction.reply({
+          content: "You are not in a voice channel!",
+          ephemeral: true,
+        });
       }
-    });
+      // Check if bot and client are in same channel and are able to be in same channel
+      if (
+        interaction.guild.me.voice.channelId &&
+        interaction.member.voice.channelId !==
+          interaction.guild.me.voice.channelId
+      )
+        return await interaction.reply({
+          content: "We are not in the same voice channel",
+          ephemeral: true,
+        });
+
+      await interaction.deferReply();
+      const queue = player.getQueue(interaction.guildId);
+
+      if (!queue.tracks)
+        return void interaction.followUp({
+          content: "There is no queue",
+        });
+
+      if (queue.tracks.length !== 0) {
+        console.log(queue.tracks, " queue.tracks");
+        for (let i = 0; i <= queue.tracks.length; i++) {
+          let trackList = queue.tracks[i];
+          return void interaction.followUp({
+            content: `Track Queue:\n Title: ${trackList.title}, Artist: ${trackList.author}\n ${trackList.thumbnail} `,
+          });
+        }
+      }
+    }
   },
 };
-
-function generateQueueEmbed(interaction, queue) {
-  let embeds = [];
-  let k = 10;
-
-  for (let i = 0; i < queue.length; i += 10) {
-    const current = queue.slice(i, k);
-    let j = i;
-    k += 10;
-
-    const info = current
-      .map((track) => `${++j} - [${track.title}](${track.url})`)
-      .join("\n");
-
-    const embed = new MessageEmbed()
-      .setTitle("queue.embedTitle")
-      .setThumbnail(interaction.guild.iconURL())
-      .setColor("#F8AA2A")
-      .setDescription("queue.embedCurrentSong", {
-        title: queue[0].title,
-        url: queue[0].url,
-        info: info,
-      })
-
-      .setTimestamp();
-    embeds.push(embed);
-  }
-
-  return embeds;
-}
