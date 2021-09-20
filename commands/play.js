@@ -71,7 +71,7 @@ module.exports = {
         });
 
       queue.play(track);
-
+      queue.setVolume(50);
       return await interaction.followUp({
         content: `Yes My Lord! ⏱️ | Loading track **${track.title}**!`,
       });
