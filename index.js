@@ -30,14 +30,13 @@ const client = new Client({
 const player = new Player(client);
 
 // TODO: make a player listener module
-// Add the trackStart event so when a song will be played this message will be sent
+// Console log all metadata for songs being played
 player.on("trackStart", (queue, track) => {
-  // TODO: figure out this metadata error I keep catching
-  
-    queue.metadata.send(
-      `🎶 | Started playing: **${track.title}** in **${queue.connection.channel.name}**!`
-    );
-  
+  try {
+    console.log(queue.nowPlaying(track));
+  } catch (error) {
+    console.log("weird erron with certain songs causing crash?", error);
+  }
 });
 
 // Load Bot Event Listeners
@@ -93,5 +92,6 @@ client.on("interactionCreate", async (interaction) => {
 // Login to Discord with your client's token
 client.login(TOKEN);
 
+// Export clien and player to be used through other parts of application
 module.exports.client = client;
 module.exports.player = player;

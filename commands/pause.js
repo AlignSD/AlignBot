@@ -12,7 +12,6 @@ module.exports = {
     // prevent my friends from using this against me
     if (interaction.user.username === "AlignSD") {
       // check if user is in a voice channel
-
       if (!interaction.member.voice.channelId)
         return await interaction.reply({
           content: "You are not in a voice channel!",
@@ -44,7 +43,7 @@ module.exports = {
       } catch {
         queue.destroy();
         return await interaction.deferreply({
-          content: "Could not join your voice channel!",
+          content: "There is no current queue!",
           ephemeral: true,
         });
       }
